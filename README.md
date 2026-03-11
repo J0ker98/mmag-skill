@@ -27,7 +27,7 @@ MMAG organizes agent memory across five interacting types inspired by cognitive 
 claw install mmag
 
 # Or clone and use directly
-git clone <repo>
+git clone git@github.com:J0ker98/mmag-skill.git
 bash ~/.openclaw/skills/mmag/init.sh
 ```
 
