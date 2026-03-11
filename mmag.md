@@ -1,3 +1,6 @@
+> Zeppieri, S. *Mixed Memory-Augmented Generation (MMAG)* 2025.
+> [https://arxiv.org/abs/2512.01710](https://arxiv.org/abs/2512.01710)
+
 # Introduction
 
 Large Language Models (LLMs) have achieved remarkable progress in
