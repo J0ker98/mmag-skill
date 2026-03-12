@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # context.sh – Assemble a merged LLM prompt context from all MMAG memory layers
-# Usage: bash context.sh [--max-chars N] [--root <memory-root>]
+# Usage: bash context.sh [--max-chars N] [--root <memory-root>] [--no-redact]
 #
 # Priority order (highest to lowest, per MMAG paper):
 #   1. Long-Term User Memory  → system-level context
@@ -11,11 +11,13 @@
 #
 # Encrypted files (.md.enc) are transparently decrypted via decrypt.sh --stdout.
 # Set MMAG_KEY or MMAG_KEY_FILE before calling if long-term layer is encrypted.
+# Secret-like patterns are redacted by default. Pass --no-redact to disable.
 
 set -euo pipefail
 
 ROOT="memory"
 MAX_CHARS=90000  # approx 90k chars (~22k tokens) default
+REDACT=true
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -27,6 +29,10 @@ while [[ $# -gt 0 ]]; do
       ROOT="$2"
       shift 2
       ;;
+    --no-redact)
+      REDACT=false
+      shift
+      ;;
     *)
       shift
       ;;
@@ -35,6 +41,12 @@ done
 
 BUFFER=""
 TOTAL=0
+
+redact_secrets() {
+  sed -E \
+    -e 's/(sk-[A-Za-z0-9_-]{16,})/[REDACTED_KEY]/g' \
+    -e 's/((api|access|secret|private)[_-]?(key|token|password)[[:space:]]*[:=][[:space:]]*)[^[:space:]]+/\1[REDACTED]/Ig'
+}
 
 append_layer() {
   local layer="$1"
@@ -66,6 +78,9 @@ append_layer() {
       content=$(bash "$SKILL_DIR/decrypt.sh" --stdout --file "$f" 2>/dev/null || echo "[encrypted — set MMAG_KEY to decrypt]")
     else
       content=$(cat "$f")
+    fi
+    if $REDACT; then
+      content=$(printf "%s" "$content" | redact_secrets)
     fi
     section+="\\n$content\\n"
   done <<< "$files"

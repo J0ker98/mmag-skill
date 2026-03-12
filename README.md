@@ -62,8 +62,8 @@ bash snapshot.sh    # save compressed backup
 |---|---|---|
 | `init.sh` | `bash init.sh` | Create the 5-layer memory directory |
 | `store.sh` | `bash store.sh <layer> "<text>" [--label <name>]` | Append a timestamped entry |
-| `retrieve.sh` | `bash retrieve.sh <layer\|all> [query]` | Search by layer and keyword |
-| `context.sh` | `bash context.sh [--max-chars N]` | Build prioritized LLM prompt context |
+| `retrieve.sh` | `bash retrieve.sh <layer\|all> [query] [--no-redact]` | Search by layer and keyword |
+| `context.sh` | `bash context.sh [--max-chars N] [--no-redact]` | Build prioritized LLM prompt context |
 | `prune.sh` | `bash prune.sh` | Archive working memory, clear scratchpad |
 | `snapshot.sh` | `bash snapshot.sh` | Full compressed snapshot of all layers |
 | `stats.sh` | `bash stats.sh` | Per-layer file count, size, last entry |
@@ -91,6 +91,12 @@ bash snapshot.sh    # save compressed backup
 - Session end:   bash prune.sh
 - Weekly:        bash snapshot.sh
 ```
+
+## Security Notes
+
+- Prefer `MMAG_KEY_FILE` over exporting `MMAG_KEY` in shell environments.
+- `retrieve.sh` and `context.sh` redact obvious secrets by default; use `--no-redact` only for trusted local debugging.
+- Runtime dependencies: `bash`, `openssl`, `find`, `sed`, `grep`, `tar`, `du`.
 
 ---
 

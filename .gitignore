@@ -57,3 +57,8 @@ Temporary Items
 
 # MMAG runtime memory — user data, never commit
 memory/
+
+# MMAG encryption artifacts / key material
+.key
+*.key
+*.md.enc
